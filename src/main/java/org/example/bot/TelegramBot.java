@@ -1,6 +1,7 @@
 package org.example.bot;
 
 
+
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -12,19 +13,14 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        String chatID = update.getMessage().getChatId().toString();
-        String text = update.getMessage().getText();
+        Handlers messageList = new Handlers();
 
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(chatID);
-        sendMessage.setText(text);
-
-        try {
-            this.execute(sendMessage);
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+        if (update.hasMessage() && update.getMessage().hasText()){
+            System.out.println(update.getMessage().getText());
+            Long chatID = update.getMessage().getChatId();
+            String text = update.getMessage().getText().toLowerCase();
+            messageList.telegramHandlers(text, chatID);
         }
-
     }
 
     @Override
