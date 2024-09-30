@@ -1,2 +1,4 @@
-package orgexample;public class mainTest {
+package org.example;
+
+public class mainTest {
 }

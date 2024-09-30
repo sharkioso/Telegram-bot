@@ -4,12 +4,14 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class Handlers extends TelegramBot {
-    Map<String, Runnable> commands = new HashMap<>();
-    Map<String, String> helpText = new HashMap<>();
 
+public class Handlers extends TelegramBot {
+    Map<String, Runnable> commands = new LinkedHashMap<>();
+    Map<String, String> helpText = new LinkedHashMap<>();
+    public String answer = "";
     public void telegramHandlers(String messageText, Long chatId) {
         commands.put("/start", () -> startCommand(chatId));
         helpText.put("start", "Это команда для начала нашего общения");
@@ -27,28 +29,34 @@ public class Handlers extends TelegramBot {
             if (messageText.length() > 6) {
                 messageText = messageText.substring(6);
             }
+            answer =helpText.get(messageText);
             sendMessage(chatId, helpText.get(messageText));
         } else {
             if (commands.containsKey(messageText)) {
                 commands.get(messageText).run();
             } else {
+                answer="Нет такой команды\nЯ вас не понимаю";
                 sendMessage(chatId, "Нет такой команды\nЯ вас не понимаю");
             }
         }
     }
 
+    public String getAnswer(){
+        return answer;
+    }
     private void startCommand(Long chatId) {
-        String answer = "Привет, ты попал в бот знакомств";
+        answer = "Привет, ты попал в бот знакомств";
         sendMessage(chatId, answer);
     }
 
+
     private void authorsCommand(Long chatId) {
-        String answer = "Этот бот делали Анастасия Вячеславовна и Тёткин Миша";
+        answer = "Этот бот делали Анастасия Вячеславовна и Тёткин Миша";
         sendMessage(chatId, answer);
     }
 
     private void aboutCommand(Long chatId) {
-        String answer = "Здесь вы найдете себе пару)";
+        answer = "Здесь вы найдете себе пару)";
         sendMessage(chatId, answer);
     }
 
