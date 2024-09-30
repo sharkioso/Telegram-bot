@@ -17,33 +17,33 @@ import static org.mockito.Mockito.*;
 public class HandlersTest {
     @Test
     public void startTest() {
-
+        Update update = new Update();
         Handlers handlerTest =  new Handlers();
         String message = "/start";
-        long chatId = 123456L;
-        handlerTest.telegramHandlers(message,chatId);
+        long chatId = 749240804;
+        handlerTest.telegramHandlers(message,chatId,update);
         Assertions.assertEquals("Привет, ты попал в бот знакомств",handlerTest.getAnswer());
 
     }
 
     @Test
     public void helpTest() {
-
+        Update update = new Update();
         Handlers handlerTest =  new Handlers();
         String message = "/help start";
-        long chatId = 785838135;
-        handlerTest.telegramHandlers(message,chatId);
+        long chatId = 749240804;
+        handlerTest.telegramHandlers(message,chatId,update);
         Assertions.assertEquals("Это команда для начала нашего общения",handlerTest.getAnswer());
 
     }
 
     @Test
     public void nonexistentTest() {
-
+        Update update = new Update();
         Handlers handlerTest =  new Handlers();
         String message = "dsa";
-        long chatId = 767567988;
-        handlerTest.telegramHandlers(message,chatId);
+        long chatId = 749240804;
+        handlerTest.telegramHandlers(message,chatId, update);
         Assertions.assertEquals("Нет такой команды\nЯ вас не понимаю",handlerTest.getAnswer());
 
     }
