@@ -14,6 +14,7 @@ import static org.example.bot.FSMHandler.FSMCommands;
 public class Handlers extends TelegramBot {
     Map<String, Runnable> commands = new LinkedHashMap<>();
     Map<String, String> helpText = new LinkedHashMap<>();
+
     public String answer = "";
     public void telegramHandlers(String messageText, Long chatId, Update update) {
         commands.put("/start", () -> startCommand(chatId));
@@ -26,6 +27,7 @@ public class Handlers extends TelegramBot {
         helpText.put("about", "Эта команда описывает бота");
 
         commands.put("/registr",() -> reg(chatId,update));
+        helpText.put("registr", "Это команда для регистрации");
 
         helpText.put("/help", "Бот имеет следующие команды: \n/start\n/about\n/authors\n/help\nДля подробной информации введите \"/help команда\"");
         helpText.put("help", "Вводя эту команду вы можете узнать какие команды умеет делать бот");
@@ -34,14 +36,12 @@ public class Handlers extends TelegramBot {
             if (messageText.length() > 6) {
                 messageText = messageText.substring(6);
             }
-            answer =helpText.get(messageText);
+            answer = helpText.get(messageText);
             sendMessage(chatId, helpText.get(messageText));
-        }
-        else if (FSM.currentState!="not working"){
-            FSMHandler automat = new FSMHandler(chatId,update);
+        } else if (FSM.currentState != "not working"){
+            FSMHandler automat = new FSMHandler(chatId, update);
             FSMCommands.get(FSM.currentState).run();
-        }
-        else {
+        } else {
             if (commands.containsKey(messageText)) {
                 commands.get(messageText).run();
             } else {

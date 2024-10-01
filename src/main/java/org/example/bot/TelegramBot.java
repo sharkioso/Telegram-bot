@@ -20,7 +20,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             String text = update.getMessage().getText().toLowerCase();
             messageList.telegramHandlers(text, chatID, update);
             String kk = messageList.getAnswer();
-            System.out.println(FSM.currentState);
             System.out.println(kk);
         }
     }
