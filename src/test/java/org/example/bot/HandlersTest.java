@@ -21,7 +21,7 @@ public class HandlersTest {
         Handlers handlerTest =  new Handlers();
         String message = "/start";
         long chatId = 749240804;
-        handlerTest.telegramHandlers(message,chatId,update);
+        handlerTest.telegramHandlers(chatId,message);
         Assertions.assertEquals("Привет, ты попал в бот знакомств",handlerTest.getAnswer());
 
     }
@@ -32,7 +32,7 @@ public class HandlersTest {
         Handlers handlerTest =  new Handlers();
         String message = "/help start";
         long chatId = 749240804;
-        handlerTest.telegramHandlers(message,chatId,update);
+        handlerTest.telegramHandlers(chatId,message);
         Assertions.assertEquals("Это команда для начала нашего общения",handlerTest.getAnswer());
 
     }
@@ -43,7 +43,7 @@ public class HandlersTest {
         Handlers handlerTest =  new Handlers();
         String message = "dsa";
         long chatId = 749240804;
-        handlerTest.telegramHandlers(message,chatId, update);
+        handlerTest.telegramHandlers(chatId,message);
         Assertions.assertEquals("Нет такой команды\nЯ вас не понимаю",handlerTest.getAnswer());
 
     }
