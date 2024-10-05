@@ -8,12 +8,13 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import static org.example.bot.FSMHandler.FSMCommands;
 
 
 public class Handlers extends TelegramBot {
-    Map<String, BiConsumer<Long,String>> commands = new LinkedHashMap<>();
+    Map<String, Consumer<Long>> commands = new LinkedHashMap<>();
 
     Map<String, String> helpText = new LinkedHashMap<>();
     public String answer = "";
@@ -37,7 +38,7 @@ public class Handlers extends TelegramBot {
             sendMessage(chatId, helpText.get(messageText));
         } else {
             if (commands.containsKey(messageText)) {
-                commands.get(messageText).accept(chatId,messageText);
+                commands.get(messageText).accept(chatId);
             } else {
                 answer="Нет такой команды\nЯ вас не понимаю";
                 sendMessage(chatId, "Нет такой команды\nЯ вас не понимаю");
@@ -53,18 +54,18 @@ public class Handlers extends TelegramBot {
     public String getAnswer(){
         return answer;
     }
-    private void startCommand(Long chatId,String text) {
+    private void startCommand(Long chatId) {
         answer = "Привет, ты попал в бот знакомств";
         sendMessage(chatId, answer);
     }
 
 
-    private void authorsCommand(Long chatId,String text) {
+    private void authorsCommand(Long chatId) {
         answer = "Этот бот делали Анастасия Вячеславовна и Тёткин Миша";
         sendMessage(chatId, answer);
     }
 
-    private void aboutCommand(Long chatId,String text) {
+    private void aboutCommand(Long chatId) {
         answer = "Здесь вы найдете себе пару)";
         sendMessage(chatId, answer);
     }
