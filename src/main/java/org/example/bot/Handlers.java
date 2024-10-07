@@ -1,7 +1,6 @@
 package org.example.bot;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.LinkedHashMap;
@@ -16,15 +15,19 @@ public class Handlers extends TelegramBot {
     Map<String, Consumer<Long>> commands = new LinkedHashMap<>();
 
     static Map<Long,FSM> usersRegInfo=new LinkedHashMap<>();
-    static Map<String, String> registrInfo = new LinkedHashMap<>();
+    static Map<Long, InfoUser> registerInfo = new LinkedHashMap<>();
+
     Map<String,BiConsumer<Long,String>> commandsFSM = new LinkedHashMap<>();
     Map<String, String> helpText = new LinkedHashMap<>();
+
     public String answer = "";
+
+
     public Handlers(){
         commands.put("/start",this::startCommand);
         commands.put("/authors",this::authorsCommand);
         commands.put("/about",this::aboutCommand);
-        commands.put("/registr",this::registrationCommand);
+        commands.put("/register",this::registrationCommand);
 
         commandsFSM.put("name", this::setName);
         commandsFSM.put("gender", this::setGender);
@@ -35,9 +38,11 @@ public class Handlers extends TelegramBot {
         helpText.put("start", "Это команда для начала нашего общения");
         helpText.put("authors", "Это команда, которая расскажет тебе, кто написал этого бота");
         helpText.put("about", "Эта команда описывает бота");
-        helpText.put("/help", "Бот имеет следующие команды: \n/start\n/about\n/authors\n/help\nДля подробной информации введите \"/help команда\"");
+        helpText.put("/help", "Бот имеет следующие команды: \n/start\n/about\n/authors\n/register\n/help\nДля подробной информации введите \"/help команда\"");
         helpText.put("help", "Вводя эту команду вы можете узнать какие команды умеет делать бот");
     }
+
+
     public void telegramHandlers(Long chatId,String messageText) {
         if (usersRegInfo.containsKey(chatId)){
             if(usersRegInfo.get(chatId).currentState=="registred"){
@@ -62,13 +67,17 @@ public class Handlers extends TelegramBot {
         }
     }
 
+
     public String getAnswer(){
         return answer;
     }
+
+
     private void startCommand(Long chatId) {
         answer = "Привет, ты попал в бот знакомств";
         sendMessage(chatId, answer);
     }
+
 
     private void registrationCommand(long chatId) {
         FSM automat= new FSM();
@@ -84,10 +93,12 @@ public class Handlers extends TelegramBot {
         sendMessage(chatId, answer);
     }
 
+
     private void aboutCommand(Long chatId) {
         answer = "Здесь вы найдете себе пару)";
         sendMessage(chatId, answer);
     }
+
 
     public void sendMessage(Long chatId, String textToSend) {
         SendMessage massage = new SendMessage();
@@ -101,43 +112,44 @@ public class Handlers extends TelegramBot {
         }
     }
 
+
     private void setName(long chatId, String messageText) {
-        registrInfo.put("id", messageText);
-        registrInfo.put("name",messageText);
+        InfoUser user = new InfoUser();
+        registerInfo.put(chatId, user);
+        registerInfo.get(chatId).setName(messageText);
         sendMessage(chatId, "Прекрасное имя, какого ты пола?");
         usersRegInfo.get(chatId).changeState("gender");
     }
 
+
     private void setGender (long chatId, String messageText){
-        if (messageText == "Мужчина"){
-            registrInfo.put("gender","true");
-        }
-        else registrInfo.put("gender","");
+        registerInfo.get(chatId).setGender(messageText);
         sendMessage(chatId,"из какого ты города?");
         usersRegInfo.get(chatId).changeState("town");
     }
 
 
     private void setTown(long chatId, String messageText) {
-        registrInfo.put("town", messageText);
+        registerInfo.get(chatId).setTown(messageText);
         sendMessage(chatId, "Отлично, сколько тебе лет?");
         usersRegInfo.get(chatId).changeState("age");
     }
 
+
     private void setAge(long chatId, String messageText) {
-        registrInfo.put("age", messageText);
+        registerInfo.get(chatId).setAge(messageText);
         sendMessage(chatId, "Опиши себе несколькими словами");
         usersRegInfo.get(chatId).changeState("discription");
     }
 
+
     private void setDiscription(long chatId,String messageText) {
-        registrInfo.put("description", messageText);;
+        registerInfo.get(chatId).setAbout(messageText);;
         sendMessage(chatId, "Давай посмотрим что у нас получилось");
-        sendMessage(chatId, registrInfo.get("name") + " " + registrInfo.get("town") +
-                " " + registrInfo.get("age") + " " + registrInfo.get("description"));
+        sendMessage(chatId, registerInfo.get(chatId).allInfo());
         usersRegInfo.get(chatId).changeState("registred");
         System.out.println(usersRegInfo.get(chatId).currentState);
-        insertPerson(registrInfo.get("id"), registrInfo.get("name"), Boolean.valueOf(registrInfo.get("gender")),
-                Integer.parseInt(registrInfo.get("age")), registrInfo.get("town"), registrInfo.get("description"));
+        insertPerson(String.valueOf(chatId), registerInfo.get(chatId).getName(), registerInfo.get(chatId).getGender(),
+                registerInfo.get(chatId).getAge(), registerInfo.get(chatId).getTown(), registerInfo.get(chatId).getAbout());
     }
 }

@@ -7,6 +7,7 @@ public class FSM {
 
     public LinkedHashMap<String, String> switchState = new LinkedHashMap<>();
 
+
     public FSM() {
         currentState="";
         switchState.put("name", "gender");
@@ -16,9 +17,11 @@ public class FSM {
         switchState.put("description", "registred");
     }
 
+
     public String getState() {
         return currentState;
     }
+
 
     public void changeState(String text) {
         currentState = text;
