@@ -1,19 +1,19 @@
 package org.example.bot;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class FSM {
-    public static String currentState = "not working";
+    public String currentState;
 
     public LinkedHashMap<String, String> switchState = new LinkedHashMap<>();
 
     public FSM() {
+        currentState="";
         switchState.put("name", "gender");
         switchState.put("gender","town");
         switchState.put("town", "age");
         switchState.put("age", "description");
-        switchState.put("description", "photo");
+        switchState.put("description", "registred");
     }
 
     public String getState() {
