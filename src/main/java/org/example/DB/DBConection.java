@@ -4,10 +4,13 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+
 public class DBConection {
+
     private static final String url = System.getenv("urlDataBaseTG");
     private static final String user = System.getenv("userDataBaseTG");
     private static final String pasword = System.getenv("paswordDataBaseTG");
+
 
     public static Connection connect() {
         Connection conn = null;
@@ -19,6 +22,7 @@ public class DBConection {
         }
         return conn;
     }
+
 
     public static void insertPerson(String id, String name, Boolean gender, int age, String town, String description) {
         String sql = "INSERT INTO person(id, name, gender, age, town, description) VALUES(?, ?, ?, ?, ?, ?)";
@@ -37,3 +41,5 @@ public class DBConection {
         }
     }
 }
+
+
