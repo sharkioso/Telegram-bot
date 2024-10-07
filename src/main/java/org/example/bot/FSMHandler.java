@@ -4,6 +4,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 import static org.example.DB.DBConection.insertPerson;
 
@@ -11,16 +12,16 @@ import static org.example.DB.DBConection.insertPerson;
 public class FSMHandler {
 
     Handlers messageList = new Handlers();
-    static Map<String, Runnable> FSMCommands = new LinkedHashMap<>();
+    static Map<String, BiConsumer<Long,Update>> commandsFSM = new LinkedHashMap<>();
     public static Map<String, String> registrInfo = new LinkedHashMap<>();
-    private static FSM fsm = new FSM();
 
+    FSM fsm = new FSM();
     public FSMHandler(long chatId, Update update) {
-        FSMCommands.put("name", () -> setName(chatId, update));
-        FSMCommands.put("gender", () -> setGender(chatId, update));
-        FSMCommands.put("town", () -> setTown(chatId, update));
-        FSMCommands.put("age", () -> setAge(chatId, update));
-        FSMCommands.put("discription", () -> setDiscription(chatId, update));
+        commandsFSM.put("name", this::setName);
+        commandsFSM.put("gender", this::setGender);
+        commandsFSM.put("town", this::setTown);
+        commandsFSM.put("age", this::setAge);
+        commandsFSM.put("discription",this::setDiscription);
     }
 
     public void registration(long chatId) {
