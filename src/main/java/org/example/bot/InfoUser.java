@@ -52,6 +52,6 @@ public class InfoUser {
     }
 
     public String allInfo() {
-        return (this.name + " " + this.age + " " + this.town + "\n" + this.description);
+        return (this.name +" "+ this.age +" " + this.town + "\n" + this.description);
     }
 }
