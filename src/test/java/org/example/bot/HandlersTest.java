@@ -17,7 +17,6 @@ import static org.mockito.Mockito.*;
 public class HandlersTest {
     @Test
     public void startTest() {
-        Update update = new Update();
         Handlers handlerTest =  new Handlers();
         String message = "/start";
         long chatId = 749240804;
@@ -28,7 +27,6 @@ public class HandlersTest {
 
     @Test
     public void helpTest() {
-        Update update = new Update();
         Handlers handlerTest =  new Handlers();
         String message = "/help start";
         long chatId = 749240804;
@@ -38,8 +36,7 @@ public class HandlersTest {
     }
 
     @Test
-    public void nonexistentTest() {
-        Update update = new Update();
+    public void nonExistentTest() {
         Handlers handlerTest =  new Handlers();
         String message = "dsa";
         long chatId = 749240804;
@@ -48,4 +45,19 @@ public class HandlersTest {
 
     }
 
+    @Test
+    public void registrationTest(){
+        Handlers handlerTest =  new Handlers();
+        String message = "/register";
+        long chatId = 749240804;
+        long chatIdOther= 75934878;
+        handlerTest.telegramHandlers(chatId,message);
+        handlerTest.telegramHandlers(chatId,"Влад");
+        handlerTest.telegramHandlers(chatId,"Мужчина");
+        handlerTest.telegramHandlers(chatId,"Москва");
+        handlerTest.telegramHandlers(chatIdOther,"dssad");
+        handlerTest.telegramHandlers(chatId,"20");
+        handlerTest.telegramHandlers(chatId,"тесты");
+        Assertions.assertEquals("Влад 20 Москва\n тесты",handlerTest.getAnswer());
+    }
 }

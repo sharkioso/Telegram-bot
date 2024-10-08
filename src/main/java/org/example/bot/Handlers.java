@@ -45,12 +45,7 @@ public class Handlers extends TelegramBot {
 
     public void telegramHandlers(Long chatId,String messageText) {
         if (usersRegInfo.containsKey(chatId)){
-            if(usersRegInfo.get(chatId).currentState=="registred"){
-                sendMessage(chatId,"А всё заюш, хуй тебе а не регистрация");
-            }
-            else{
             commandsFSM.get(usersRegInfo.get(chatId).currentState).accept(chatId,messageText);}
-        }
         else if (messageText.contains("/help")) {
             if (messageText.length() > 6) {
                 messageText = messageText.substring(6);
@@ -82,7 +77,8 @@ public class Handlers extends TelegramBot {
     private void registrationCommand(long chatId) {
         FSM automat= new FSM();
         usersRegInfo.put(chatId,automat);
-        sendMessage(chatId,"Отлично, давай знакомиться!\nКак тебя зовут?");
+        answer="Отлично, давай знакомиться!\nКак тебя зовут?";
+        sendMessage(chatId,answer);
         usersRegInfo.get(chatId).changeState("name");
         System.out.println(usersRegInfo.get(chatId).currentState);
     }
@@ -146,6 +142,7 @@ public class Handlers extends TelegramBot {
     private void setDiscription(long chatId,String messageText) {
         registerInfo.get(chatId).setAbout(messageText);;
         sendMessage(chatId, "Давай посмотрим что у нас получилось");
+        answer=registerInfo.get(chatId).allInfo();
         sendMessage(chatId, registerInfo.get(chatId).allInfo());
         usersRegInfo.get(chatId).changeState("registred");
         System.out.println(usersRegInfo.get(chatId).currentState);
