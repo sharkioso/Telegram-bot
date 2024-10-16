@@ -15,6 +15,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             System.out.println(update.getMessage().getText());
             Long chatID = update.getMessage().getChatId();
             String text = update.getMessage().getText().toLowerCase();
+
             if (text.charAt(0) == '/') {
                 Handlers messageList = new Handlers();
                 messageList.telegramHandlers(chatID, text);

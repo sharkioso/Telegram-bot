@@ -9,8 +9,8 @@ import static org.example.DB.DBConection.*;
 
 
 public class Handlers extends Executer {
-    Map<String, Consumer<Long>> commands = new LinkedHashMap<>();
-    Map<String, String> helpText = new LinkedHashMap<>();
+    LinkedHashMap<String, Consumer<Long>> commands = new LinkedHashMap<>();
+    LinkedHashMap<String, String> helpText = new LinkedHashMap<>();
 
     public String answer = "";
 
@@ -20,7 +20,7 @@ public class Handlers extends Executer {
         commands.put("/authors", this::authorsCommand);
         commands.put("/about", this::aboutCommand);
         commands.put("/register", this::registrationCommand);
-
+    //    commands.put("/help",this::helpCommand);
 
         helpText.put("start", "Это команда для начала нашего общения");
         helpText.put("authors", "Это команда, которая расскажет тебе, кто написал этого бота");
@@ -31,18 +31,19 @@ public class Handlers extends Executer {
     }
 
 
+
     public void telegramHandlers(Long chatId, String messageText) {
         if (messageText.contains("/help")) {
             if (messageText.length() > 6) {
                 messageText = messageText.substring(6);
             }
             answer = helpText.get(messageText);
-            sendMessage(chatId, answer);
+            startKeyboardCreator(chatId,commands,answer);
         } else {
             if (commands.containsKey(messageText)) {
                 commands.get(messageText).accept(chatId);
             } else {
-                answer = "Нет такой команды\nЯ вас не понимаю";
+                answer = "Нет такой команды\nЯ вас не понимаю ❤";
                 sendMessage(chatId, answer);
             }
         }
@@ -56,9 +57,8 @@ public class Handlers extends Executer {
 
     private void startCommand(Long chatId) {
         answer = "Привет, ты попал в бот знакомств";
-        sendMessage(chatId, answer);
+        startKeyboardCreator(chatId,helpText,answer);
     }
-
 
     private void registrationCommand(long chatId) {
         if (isUserExist(chatId)) {
