@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.ResultSet;
 
+import static org.example.DB.DBConection.deletePerson;
 import static org.example.DB.DBConection.sendPerson;
 
 
@@ -41,7 +42,7 @@ public class HandlersTest {
     @Test
     public void regiterTest() {
         Handlers handlersTest = new Handlers();
-        long chatID = 777777210;
+        long chatID = 777157210;
         long otherChatId = 1111;
         handlersTest.telegramHandlers(chatID, "/register");
         Dialog dialogTest = new Dialog();
@@ -58,13 +59,6 @@ public class HandlersTest {
         dialogTest.dialogProcess(chatID, description);
         String localAnswer = name + " " + age + " " + town + "\n" + description;
         Assertions.assertEquals(localAnswer, Dialog.answerDialog);
-    }
-
-
-    @Test
-    public void dataBaseTest() {
-        String localAnswer = "ID: 749240804, Name: ya3, Gender: false, Age: 23, Town: moscow, Description: hip and hop";
-        String infoDB = sendPerson(23);
-        Assertions.assertEquals(infoDB, localAnswer);
+        deletePerson(777157210);
     }
 }

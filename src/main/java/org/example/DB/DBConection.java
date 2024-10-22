@@ -31,6 +31,18 @@ public class DBConection {
         }
     }
 
+    public static void deletePerson(long id) {
+        String sql = "DElETE FROM public.\"FSM \" WHERE \"ChatID\" = ?";
+
+        try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, Integer.parseInt(String.valueOf(id)));
+            pstmt.executeUpdate();
+            System.out.println("Person delete");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     public static Boolean isUserExist(long chatId) {
         String query = "SELECT 1 FROM \"FSM \" WHERE \"ChatID\" = ?";
 
