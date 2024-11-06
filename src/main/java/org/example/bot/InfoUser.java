@@ -28,7 +28,7 @@ public class InfoUser {
     }
 
     public Boolean getGender() {
-        return Objects.equals(gender, "Мужчина");
+        return gender.equalsIgnoreCase( "Мужчина");
     }
 
     public void setGender(String gender) {
