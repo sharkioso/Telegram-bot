@@ -1,8 +1,6 @@
 package org.example.bot;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 import static org.example.DB.DBConection.*;
@@ -12,6 +10,7 @@ public class Dialog extends Executer {
     Map<String, BiConsumer<Long, String>> commandsFSM = new LinkedHashMap<>();
     static Map<Long, InfoUser> registerInfo = new LinkedHashMap<>();
     static String answerDialog = "";
+    List<String> viewingKeyboardButtons = new ArrayList<>();
 
     public Dialog() {
         commandsFSM.put("name", this::setName);
@@ -22,6 +21,9 @@ public class Dialog extends Executer {
         commandsFSM.put("looking", this::getProfile);
         commandsFSM.put("age_max", this::ageMax);
         commandsFSM.put("age_min", this::ageMin);
+
+        viewingKeyboardButtons.add("❤\uFE0F");
+        viewingKeyboardButtons.add("\"\\uD83D\\uDC4E\"");
     }
 
 
@@ -99,14 +101,15 @@ public class Dialog extends Executer {
 
             if (!ans.equalsIgnoreCase("")) {
                 if (massageText.equalsIgnoreCase("Начать")) {
-                    sendMessage(chatId, "Вот первая анкета, если захочешь остановить знакомство, напиши \"Стоп\"");
+                    startKeyboardCreator(chatId,viewingKeyboardButtons,"Вот первая анкета, если захочешь остановить" +
+                                    " знакомство, напиши \"Стоп\"");
                     sendMessage(chatId, sendPerson(Integer.parseInt(ans)));
                     changeNumPerson(chatId, count_look + 1);
-                } else if (massageText.equalsIgnoreCase("Фу")) {
+                } else if (massageText.equalsIgnoreCase("\uD83D\uDC4E")) {
                     sendMessage(chatId, "Понятно, это тебе не подходит\nДавай смотреть дальше");
                     sendMessage(chatId, sendPerson(Integer.parseInt(ans)));
                     changeNumPerson(chatId, count_look + 1);
-                } else if (massageText.equalsIgnoreCase("Лайк")) {
+                } else if (massageText.equalsIgnoreCase("❤\uFE0F")) {
                     sendMessage(chatId, "Отлично, будем надеяться, что это взаимно");
                     sendMessage(chatId, sendPerson(Integer.parseInt(ans)));
                     changeNumPerson(chatId, count_look + 1);

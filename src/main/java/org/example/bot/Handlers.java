@@ -1,7 +1,11 @@
 package org.example.bot;
 
 
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -11,7 +15,7 @@ import static org.example.DB.DBConection.*;
 public class Handlers extends Executer {
     LinkedHashMap<String, Consumer<Long>> commands = new LinkedHashMap<>();
     LinkedHashMap<String, String> helpText = new LinkedHashMap<>();
-
+    List<String> startButtonText= new ArrayList<>();
     public String answer = "";
 
 
@@ -27,12 +31,27 @@ public class Handlers extends Executer {
         commands.put("/gender_m", this::manCommand);
         //    commands.put("/help",this::helpCommand);
 
+
         helpText.put("start", "Это команда для начала нашего общения");
         helpText.put("authors", "Это команда, которая расскажет тебе, кто написал этого бота");
         helpText.put("about", "Эта команда описывает бота");
-        helpText.put("/help", "Бот имеет следующие команды: \n/start\n/about\n/authors\n/register\n/help\nДля подробной информации введите \"/help команда\"");
+        helpText.put("/help", "Бот имеет следующие команды: \n/start\n/about\n/authors\n/register\n/help\nДля" +
+                " подробной информации введите \"/help команда\"");
         helpText.put("help", "Вводя эту команду вы можете узнать какие команды умеет делать бот");
         helpText.put("register", "Введите эту команду для начала регистрации");
+        helpText.put("gender","используя эту команду можно задать параетр поиска, мужчины или женщины\n gender_m" +
+                " - мужчины\n gender_w - Женщины");
+        helpText.put("viewing","команда для начала просмотра анкет");
+        helpText.put("age","Команда устанавливает минимальный и максимальный возраст поиска");
+        helpText.put("geo","Команда устанавливает критерий поиска по вашему местоположению");
+
+        startButtonText.add("/start");
+        startButtonText.add("/register");
+        startButtonText.add("/help");
+        startButtonText.add("/viewing");
+
+        //buttonText.put("❤\uFE0F","aa");
+        //buttonText.put("\uD83D\uDC4E","aa");
     }
 
 
@@ -42,7 +61,7 @@ public class Handlers extends Executer {
                 messageText = messageText.substring(6);
             }
             answer = helpText.get(messageText);
-            startKeyboardCreator(chatId, commands, answer);
+            sendMessage(chatId,answer);
         } else {
             if (commands.containsKey(messageText)) {
                 commands.get(messageText).accept(chatId);
@@ -61,7 +80,7 @@ public class Handlers extends Executer {
 
     private void startCommand(Long chatId) {
         answer = "Привет, ты попал в бот знакомств";
-        startKeyboardCreator(chatId, helpText, answer);
+        startKeyboardCreator(chatId, startButtonText, answer);
     }
 
     private void registrationCommand(long chatId) {
@@ -89,12 +108,14 @@ public class Handlers extends Executer {
 
     private void viewingCommand(Long chatId) {
         if (!isUserExist(chatId)) {
-            sendMessage(chatId, "Упс, у тебя ещё нет анкеты, давай её заведем?)\n" +
-                    "Для это отправь команду \"/register\"");
+            answer = "Упс, у тебя ещё нет анкеты, давай её заведем?)\n" +
+                    "Для это отправь команду \"/register\"";
+            sendMessage(chatId, answer);
         } else {
-            sendMessage(chatId, "Отлично, давай приступим к просмотру, если тебе " +
+            answer = "Отлично, давай приступим к просмотру, если тебе " +
                     "понравится чужая анкета, отправь \"Лайк\", если нет отправь \"Фу\"\n" +
-                    "Если все понятно напиши \"Ок\"");
+                    "Если все понятно напиши \"Ок\"";
+            sendMessage(chatId, answer);
             changeState(chatId, "looking");
         }
     }
@@ -113,12 +134,14 @@ public class Handlers extends Executer {
 
     private void womanCommand(Long chatId){
         changeGender(chatId, false);
-        sendMessage(chatId, "Отлично, я все запомнил");
+        answer = "Отлично, я все запомнил";
+        sendMessage(chatId, answer);
     }
 
 
     private void manCommand(Long chatId){
         changeGender(chatId, true);
-        sendMessage(chatId, "Отлично, я все запомнил");
+        answer ="Отлично, я все запомнил";
+        sendMessage(chatId, answer);
     }
 }
