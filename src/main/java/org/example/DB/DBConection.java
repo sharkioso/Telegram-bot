@@ -104,26 +104,141 @@ public class DBConection {
         }
     }
 
-    public static String sendPerson(int age) {
-        String query = "SELECT * FROM person WHERE age = ?";
+    public static String sendPerson(int chatId) {
+        String query = "SELECT * FROM person WHERE id = ?";
         String result = "";
 
         try (Connection conn = connect(); PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, Integer.parseInt(String.valueOf(age)));
+            stmt.setString(1, String.valueOf(chatId));
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 String name = rs.getString("name");
                 boolean gender = rs.getBoolean("gender");
-                String id = rs.getString("id");
+                String age = rs.getString("age");
                 String town = rs.getString("town");
                 String description = rs.getString("description");
 
-                result = String.format("ID: %s, Name: %s, Gender: %s, Age: %d, Town: %s, Description: %s",
-                        id, name, gender, age, town, description);;
+//                result = String.format("Name: %s, Age: %s, Town: %s, Description: %s",
+//                        name, age, town, description);
+                result += name + "\n" + age + "\n" + town + "\n" + description;
             }
         } catch (SQLException e){
             System.out.println(e.getMessage());
         }
         return result;
+    }
+
+
+    public static String getPersonForNumber(int num) {
+        String query = "SELECT id FROM person LIMIT 1 OFFSET ?";
+        String chatId = "";
+
+        try(Connection conn = connect(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, num);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                chatId = rs.getString("id");
+            }
+        } catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+
+        return chatId;
+    }
+
+
+    public static int getNumPerson(long chatId) {
+        int num = -1;
+        String query = "SELECT count_look FROM person WHERE id = ?";
+
+        try (Connection conn = connect(); PreparedStatement stmt = conn.prepareStatement(query)){
+            stmt.setString(1, String.valueOf(chatId));
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                num = rs.getInt("count_look");
+            }
+        } catch(SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return num;
+    }
+
+
+    public static void changeNumPerson(long chatId, int new_num) {
+        String query = "UPDATE person SET count_look = ? WHERE id = ?";
+
+        try (Connection conn = connect(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, new_num);
+            stmt.setString(2, String.valueOf(chatId));
+            stmt.executeUpdate();
+            System.out.println("Count num changed");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+    public static void addFilterPerson(long chatId) {
+        String sql = "INSERT INTO filter(id) VALUES(?)";
+        try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, Integer.parseInt(String.valueOf(chatId)));
+            pstmt.executeUpdate();
+            System.out.println("Person added to filter");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+    public static void changeGender(long chatId, Boolean gender) {
+        String query = "UPDATE filter SET gender = ? WHERE id = ?";
+
+        try (Connection conn = connect(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setBoolean(1, gender);
+            stmt.setInt(2, Integer.parseInt(String.valueOf(chatId)));
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+    public static void changeMaxAge(long chatId, int age) {
+        String query = "UPDATE filter SET age_max = ? WHERE id = ?";
+
+        try (Connection conn = connect(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, age);
+            stmt.setInt(2, Integer.parseInt(String.valueOf(chatId)));
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+    public static void changeMinAge(long chatId, int age) {
+        String query = "UPDATE filter SET age_min = ? WHERE id = ?";
+
+        try (Connection conn = connect(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, age);
+            stmt.setInt(2, Integer.parseInt(String.valueOf(chatId)));
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+    public static void changeGeo(long chatId, double latitude, double longitude) {
+        String query = "UPDATE filter SET geo = POINT(?, ?) WHERE id = ?";
+
+        try (Connection conn = connect(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setDouble(1, latitude);
+            stmt.setDouble(2, longitude);
+            stmt.setInt(3, Integer.parseInt(String.valueOf(chatId)));
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
