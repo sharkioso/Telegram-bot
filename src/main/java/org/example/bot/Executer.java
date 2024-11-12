@@ -61,7 +61,7 @@ public abstract class Executer extends TelegramBot {
         }
     }
 
-    public void startKeyboardCreator(long chatId, List buttonText, String text) {
+    public void startKeyboardCreator(long chatId, List<String> buttonText, String text) {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText(text);

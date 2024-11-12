@@ -11,7 +11,7 @@ public class Dialog extends Executer {
     static Map<Long, InfoUser> registerInfo = new LinkedHashMap<>();
     static String answerDialog = "";
     List<String> viewingKeyboardButtons = new ArrayList<>();
-
+    static String answer = " ";
     public Dialog() {
         commandsFSM.put("name", this::setName);
         commandsFSM.put("gender", this::setGender);
@@ -23,7 +23,7 @@ public class Dialog extends Executer {
         commandsFSM.put("age_min", this::ageMin);
 
         viewingKeyboardButtons.add("❤\uFE0F");
-        viewingKeyboardButtons.add("\"\\uD83D\\uDC4E\"");
+        viewingKeyboardButtons.add("👎");
     }
 
 
@@ -66,7 +66,6 @@ public class Dialog extends Executer {
         changeState(chatId, "discription");
     }
 
-
     private void setDiscription(long chatId, String messageText) {
         registerInfo.get(chatId).setAbout(messageText);
         ;
@@ -78,6 +77,7 @@ public class Dialog extends Executer {
         insertPerson(String.valueOf(chatId), registerInfo.get(chatId).getName(), registerInfo.get(chatId).getGender(),
                 registerInfo.get(chatId).getAge(), registerInfo.get(chatId).getTown(), registerInfo.get(chatId).getAbout());
     }
+
 
 
     private void getProfile(long chatId, String massageText) {
@@ -99,22 +99,45 @@ public class Dialog extends Executer {
                 ans = getPersonForNumber(count_look);
             }
 
-            if (!ans.equalsIgnoreCase("")) {
+            String ansWhile = ans;
+            while (!profilIsOk(chatId, Long.parseLong(ansWhile)) && !ansWhile.equals("")) {
+                if (ans.equalsIgnoreCase(String.valueOf(chatId))) {
+                    count_look += 1;
+                    changeNumPerson(chatId, count_look + 1);
+                    ans = getPersonForNumber(count_look);
+                } else {
+                    count_look += 1;
+                    changeNumPerson(chatId, count_look + 1);
+                    ansWhile = getPersonForNumber(count_look);
+                }
+
+                if (ansWhile.equals("")) {
+                    sendMessage(chatId, "Ты посмотрел все анкеты");
+                    changeState(chatId, null);
+                }
+            }
+
+            ans = ansWhile;
+            System.out.println(ans + "ana");
+            if (!ans.equals("")) {
                 if (massageText.equalsIgnoreCase("Начать")) {
                     startKeyboardCreator(chatId,viewingKeyboardButtons,"Вот первая анкета, если захочешь остановить" +
                                     " знакомство, напиши \"Стоп\"");
                     sendMessage(chatId, sendPerson(Integer.parseInt(ans)));
                     changeNumPerson(chatId, count_look + 1);
                 } else if (massageText.equalsIgnoreCase("\uD83D\uDC4E")) {
-                    sendMessage(chatId, "Понятно, это тебе не подходит\nДавай смотреть дальше");
+                    answer = "Понятно, это тебе не подходит\nДавай смотреть дальше";
+                    sendMessage(chatId, answer);
                     sendMessage(chatId, sendPerson(Integer.parseInt(ans)));
                     changeNumPerson(chatId, count_look + 1);
                 } else if (massageText.equalsIgnoreCase("❤\uFE0F")) {
-                    sendMessage(chatId, "Отлично, будем надеяться, что это взаимно");
+                    answer = "Отлично, будем надеяться, что это взаимно";
+                    sendMessage(chatId, answer);
                     sendMessage(chatId, sendPerson(Integer.parseInt(ans)));
                     changeNumPerson(chatId, count_look + 1);
                 } else if (massageText.equalsIgnoreCase("Стоп")) {
-                    sendMessage(chatId, "Хорошо, давай остановимся, продолжим когда захочешь)");
+                    answer = "Хорошо, давай остановимся, продолжим когда захочешь)";
+                    sendMessage(chatId, answer);
                     changeState(chatId, null);
                 } else {
                     sendMessage(chatId, "Извини, я не понимаю, что это значит, напиши\n" +
@@ -162,5 +185,9 @@ public class Dialog extends Executer {
         }
 
         return true;
+    }
+
+    public String getAnswerDialog(){
+        return answer;
     }
 }

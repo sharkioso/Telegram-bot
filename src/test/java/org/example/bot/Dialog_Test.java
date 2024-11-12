@@ -12,10 +12,9 @@ import static org.example.DB.DBConection.sendPerson;
 public class Dialog_Test {
     @Test
     public void ViewingUserNotExistTest(){
-        Handlers handlersTest= new Handlers();
         Handlers handlerTest = new Handlers();
         String message = "/viewing";
-        long chatId = 749240804;
+        long chatId = 777777;
         handlerTest.telegramHandlers(chatId, message);
         Assertions.assertEquals("Упс, у тебя ещё нет анкеты, давай её заведем?)\n" +
                 "Для это отправь команду \"/register\"", handlerTest.getAnswer());
@@ -24,7 +23,7 @@ public class Dialog_Test {
     @Test
     public void ViewingUserExistTest(){
         Handlers handlersTest = new Handlers();
-        long chatID = 777157210;
+        long chatID = 777;
         handlersTest.telegramHandlers(chatID, "/register");
         Dialog dialogTest = new Dialog();
         String name = "Влад";
@@ -39,11 +38,14 @@ public class Dialog_Test {
         dialogTest.dialogProcess(chatID, description);
         String message = "/viewing";
         handlersTest.telegramHandlers(chatID,message);
-        Assertions.assertEquals("Отлично, давай приступим к просмотру, если тебе " +
-                "понравится чужая анкета, отправь \"Лайк\", если нет отправь \"Фу\"\n" +
-                "Если все понятно напиши \"Ок\"",handlersTest.getAnswer());
+        dialogTest.dialogProcess(chatID,"Ок");
+        dialogTest.dialogProcess(chatID,"Начать");
+        dialogTest.dialogProcess(chatID,"\uD83D\uDC4E");
+        Assertions.assertEquals("Понятно, это тебе не подходит\nДавай смотреть дальше",
+                dialogTest.getAnswerDialog());
         deletePerson(chatID);
     }
+
 
 
 

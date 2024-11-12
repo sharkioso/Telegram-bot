@@ -282,7 +282,7 @@ public class DBConection {
         int age = -1;
 
         try (Connection conn = connect(); PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, Integer.parseInt(String.valueOf(chatId)));
+            stmt.setString(1, String.valueOf(chatId));
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 age = rs.getInt("age");
@@ -323,7 +323,7 @@ public class DBConection {
         Boolean gender;
 
         try (Connection conn = connect(); PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, Integer.parseInt(String.valueOf(chatId)));
+            stmt.setString(1, String.valueOf(chatId));
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 gender = rs.getBoolean("gender");
@@ -349,6 +349,7 @@ public class DBConection {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 ans = rs.getString("geo");
+                System.out.println(ans);
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
