@@ -104,7 +104,7 @@ public class Dialog extends Executer {
                 if (ans.equalsIgnoreCase(String.valueOf(chatId))) {
                     count_look += 1;
                     changeNumPerson(chatId, count_look + 1);
-                    ans = getPersonForNumber(count_look);
+                    ansWhile = getPersonForNumber(count_look);
                 } else {
                     count_look += 1;
                     changeNumPerson(chatId, count_look + 1);
