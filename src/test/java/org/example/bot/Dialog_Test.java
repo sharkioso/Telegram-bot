@@ -23,7 +23,7 @@ public class Dialog_Test {
     @Test
     public void ViewingUserExistTest(){
         Handlers handlersTest = new Handlers();
-        long chatID = 777;
+        long chatID = 7297;
         handlersTest.telegramHandlers(chatID, "/register");
         Dialog dialogTest = new Dialog();
         String name = "Влад";
@@ -45,9 +45,4 @@ public class Dialog_Test {
                 dialogTest.getAnswerDialog());
         deletePerson(chatID);
     }
-
-
-
-
-
 }

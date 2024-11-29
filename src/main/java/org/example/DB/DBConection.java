@@ -41,6 +41,26 @@ public class DBConection {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+
+        String sqlFirst = "DElETE FROM \"filter\" WHERE \"id\" = ?";
+
+        try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(sqlFirst)) {
+            pstmt.setInt(1, Integer.parseInt(String.valueOf(id)));
+            pstmt.executeUpdate();
+            System.out.println("Person delete");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        String sqlSecond = "DElETE FROM person WHERE \"id\" = ?";
+
+        try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(sqlSecond)) {
+            pstmt.setString(1, String.valueOf(id));
+            pstmt.executeUpdate();
+            System.out.println("Person delete");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public static Boolean isUserExist(long chatId) {
@@ -262,7 +282,7 @@ public class DBConection {
 
     public static int getAgeMax(long chatId) {
         String query = "SELECT age_max FROM filter WHERE id = ?";
-        int age = 123;
+        int age = 10000;
 
         try (Connection conn = connect(); PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, Integer.parseInt(String.valueOf(chatId)));
@@ -273,6 +293,11 @@ public class DBConection {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+
+        if (age == 0) {
+            age = 10000;
+        }
+
         return age;
     }
 
@@ -349,7 +374,6 @@ public class DBConection {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 ans = rs.getString("geo");
-                System.out.println(ans);
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());

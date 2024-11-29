@@ -99,6 +99,11 @@ public class Dialog extends Executer {
                 ans = getPersonForNumber(count_look);
             }
 
+            if (ans.equals("")) {
+                sendMessage(chatId, "Ты посмотрел все анкеты");
+                changeState(chatId, null);
+            }
+
             String ansWhile = ans;
             while (!profilIsOk(chatId, Long.parseLong(ansWhile)) && !ansWhile.equals("")) {
                 if (ans.equalsIgnoreCase(String.valueOf(chatId))) {
@@ -118,7 +123,6 @@ public class Dialog extends Executer {
             }
 
             ans = ansWhile;
-            System.out.println(ans + "ana");
             if (!ans.equals("")) {
                 if (massageText.equalsIgnoreCase("Начать")) {
                     startKeyboardCreator(chatId,viewingKeyboardButtons,"Вот первая анкета, если захочешь остановить" +
@@ -171,17 +175,23 @@ public class Dialog extends Executer {
         int ageMin = getAgeMin(chatIdFirst);
         int ageMax = getAgeMax(chatIdFirst);
         int age = getAgePerson(chatIdSecond);
-        if (ageMin > age || ageMax < age){
+
+        if (ageMin > age) {
             return false;
         }
 
-        if ((!Objects.equals(getGenderPerson(chatIdFirst), getGenderLike(chatIdSecond))) &&
-                (!Objects.equals(getGenderLike(chatIdFirst), ""))) {
+        if (ageMax < age) {
             return false;
         }
 
-        if (!Objects.equals(getGeo(chatIdFirst), "")) {
-            return !Objects.equals(getGeo(chatIdSecond), "");
+        if ((!Objects.equals(getGenderLike(chatIdFirst), ""))) {
+            if (!Objects.equals(getGenderLike(chatIdFirst), getGenderPerson(chatIdSecond))) {
+                return false;
+            }
+        }
+
+        if (!Objects.equals(getGeo(chatIdFirst), null)) {
+            return !Objects.equals(getGeo(chatIdSecond), null);
         }
 
         return true;

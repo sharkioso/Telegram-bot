@@ -36,7 +36,8 @@ public class HandlersTest {
         String message = "dsa";
         long chatId = 749240804;
         handlerTest.telegramHandlers(chatId, message);
-        Assertions.assertEquals("Нет такой команды\nЯ вас не понимаю", handlerTest.getAnswer());
+        Assertions.assertEquals("Нет такой команды\n" +
+                "Я вас не понимаю ❤", handlerTest.getAnswer());
     }
 
     @Test

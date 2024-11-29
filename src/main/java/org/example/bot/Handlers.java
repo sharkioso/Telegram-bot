@@ -35,7 +35,7 @@ public class Handlers extends Executer {
         helpText.put("start", "Это команда для начала нашего общения");
         helpText.put("authors", "Это команда, которая расскажет тебе, кто написал этого бота");
         helpText.put("about", "Эта команда описывает бота");
-        helpText.put("/help", "Бот имеет следующие команды: \n/start\n/about\n/authors\n/register\n/help\nДля" +
+        helpText.put("/help", "Бот имеет следующие команды: \n/start\n/about\n/authors\n/register\n/viewing\n/help\nДля" +
                 " подробной информации введите \"/help команда\"");
         helpText.put("help", "Вводя эту команду вы можете узнать какие команды умеет делать бот");
         helpText.put("register", "Введите эту команду для начала регистрации");
