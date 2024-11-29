@@ -10,8 +10,10 @@ public class Dialog extends Executer {
     Map<String, BiConsumer<Long, String>> commandsFSM = new LinkedHashMap<>();
     static Map<Long, InfoUser> registerInfo = new LinkedHashMap<>();
     static String answerDialog = "";
+    static int reservAnswer = 0;
     List<String> viewingKeyboardButtons = new ArrayList<>();
     static String answer = " ";
+
     public Dialog() {
         commandsFSM.put("name", this::setName);
         commandsFSM.put("gender", this::setGender);
@@ -79,12 +81,13 @@ public class Dialog extends Executer {
     }
 
 
-
     private void getProfile(long chatId, String massageText) {
         if (massageText.equalsIgnoreCase("Ок")) {
+            answer = "Если хочешь добавить какие-нибудь фильтры для поиска напиши \"Фильтры\"" +
+                    "\n Если не хочешь ничего добавлять напиши \"Начать\"";
             sendMessage(chatId, "Если хочешь добавить какие-нибудь фильтры для поиска напиши \"Фильтры\"" +
                     "\n Если не хочешь ничего добавлять напиши \"Начать\"");
-        } else if (massageText.equalsIgnoreCase("Фильтры")){
+        } else if (massageText.equalsIgnoreCase("Фильтры")) {
             sendMessage(chatId, "Ты можешь добавить следующие фильтры:\n/age добавит возрастные ограничения" +
                     "\n/geo будет искать ближайших людей\n/gender_m будет показывать только мужчин" +
                     "\n/gender_w будет показывать только женщин\nПотом чтобы вернуться к просмотру анкет напиши /viewing");
@@ -125,8 +128,10 @@ public class Dialog extends Executer {
             ans = ansWhile;
             if (!ans.equals("")) {
                 if (massageText.equalsIgnoreCase("Начать")) {
-                    startKeyboardCreator(chatId,viewingKeyboardButtons,"Вот первая анкета, если захочешь остановить" +
-                                    " знакомство, напиши \"Стоп\"");
+                    startKeyboardCreator(chatId, viewingKeyboardButtons, "Вот первая анкета, если захочешь остановить" +
+                            " знакомство, напиши \"Стоп\"");
+                    reservAnswer = Integer.parseInt(ans);
+                    answer = sendPerson(Integer.parseInt(ans));
                     sendMessage(chatId, sendPerson(Integer.parseInt(ans)));
                     changeNumPerson(chatId, count_look + 1);
                 } else if (massageText.equalsIgnoreCase("\uD83D\uDC4E")) {
@@ -197,7 +202,10 @@ public class Dialog extends Executer {
         return true;
     }
 
-    public String getAnswerDialog(){
+    public String getAnswerDialog() {
         return answer;
+    }
+    public int getReservAnswer(){
+        return reservAnswer;
     }
 }
