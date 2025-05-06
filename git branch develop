@@ -1,0 +1,187 @@
+warning: in the working copy of '.idea/misc.xml', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/.idea/misc.xml b/.idea/misc.xml[m
+[1mindex 2b45618..1be5442 100644[m
+[1m--- a/.idea/misc.xml[m
+[1m+++ b/.idea/misc.xml[m
+[36m@@ -1,4 +1,3 @@[m
+[31m-<?xml version="1.0" encoding="UTF-8"?>[m
+ <project version="4">[m
+   <component name="ExternalStorageConfigurationManager" enabled="true" />[m
+   <component name="MavenProjectsManager">[m
+[1mdiff --git a/pom.xml b/pom.xml[m
+[1mindex ba883bb..4c1bd49 100644[m
+[1m--- a/pom.xml[m
+[1m+++ b/pom.xml[m
+[36m@@ -20,6 +20,18 @@[m
+             <artifactId>lombok</artifactId>[m
+             <version>1.18.20</version>[m
+         </dependency>[m
+[32m+[m[32m        <dependency>[m
+[32m+[m[32m            <groupId>org.mockito</groupId>[m
+[32m+[m[32m            <artifactId>mockito-core</artifactId>[m
+[32m+[m[32m            <version>5.12.0</version>[m
+[32m+[m[32m            <scope>test</scope>[m
+[32m+[m[32m        </dependency>[m
+[32m+[m[32m        <dependency>[m
+[32m+[m[32m            <groupId>org.junit.jupiter</groupId>[m
+[32m+[m[32m            <artifactId>junit-jupiter-api</artifactId>[m
+[32m+[m[32m            <version>5.10.0</version>[m
+[32m+[m[32m            <scope>test</scope>[m
+[32m+[m[32m        </dependency>[m
+         <dependency>[m
+             <groupId>org.telegram</groupId>[m
+             <artifactId>telegrambots</artifactId>[m
+[1mdiff --git a/src/main/java/org/example/bot/Handlers.java b/src/main/java/org/example/bot/Handlers.java[m
+[1mindex f226c9d..f375990 100644[m
+[1m--- a/src/main/java/org/example/bot/Handlers.java[m
+[1m+++ b/src/main/java/org/example/bot/Handlers.java[m
+[36m@@ -4,12 +4,14 @@[m [mimport org.telegram.telegrambots.meta.api.methods.send.SendMessage;[m
+ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;[m
+ [m
+ import java.util.HashMap;[m
+[32m+[m[32mimport java.util.LinkedHashMap;[m
+ import java.util.Map;[m
+ [m
+[31m-public class Handlers extends TelegramBot {[m
+[31m-    Map<String, Runnable> commands = new HashMap<>();[m
+[31m-    Map<String, String> helpText = new HashMap<>();[m
+ [m
+[32m+[m[32mpublic class Handlers extends TelegramBot {[m
+[32m+[m[32m    Map<String, Runnable> commands = new LinkedHashMap<>();[m
+[32m+[m[32m    Map<String, String> helpText = new LinkedHashMap<>();[m
+[32m+[m[32m    public String answer = "";[m
+     public void telegramHandlers(String messageText, Long chatId) {[m
+         commands.put("/start", () -> startCommand(chatId));[m
+         helpText.put("start", "Это команда для начала нашего общения");[m
+[36m@@ -27,28 +29,34 @@[m [mpublic class Handlers extends TelegramBot {[m
+             if (messageText.length() > 6) {[m
+                 messageText = messageText.substring(6);[m
+             }[m
+[32m+[m[32m            answer =helpText.get(messageText);[m
+             sendMessage(chatId, helpText.get(messageText));[m
+         } else {[m
+             if (commands.containsKey(messageText)) {[m
+                 commands.get(messageText).run();[m
+             } else {[m
+[32m+[m[32m                answer="Нет такой команды\nЯ вас не понимаю";[m
+                 sendMessage(chatId, "Нет такой команды\nЯ вас не понимаю");[m
+             }[m
+         }[m
+     }[m
+ [m
+[32m+[m[32m    public String getAnswer(){[m
+[32m+[m[32m        return answer;[m
+[32m+[m[32m    }[m
+     private void startCommand(Long chatId) {[m
+[31m-        String answer = "Привет, ты попал в бот знакомств";[m
+[32m+[m[32m        answer = "Привет, ты попал в бот знакомств";[m
+         sendMessage(chatId, answer);[m
+     }[m
+ [m
+[32m+[m
+     private void authorsCommand(Long chatId) {[m
+[31m-        String answer = "Этот бот делали Анастасия Вячеславовна и Тёткин Миша";[m
+[32m+[m[32m        answer = "Этот бот делали Анастасия Вячеславовна и Тёткин Миша";[m
+         sendMessage(chatId, answer);[m
+     }[m
+ [m
+     private void aboutCommand(Long chatId) {[m
+[31m-        String answer = "Здесь вы найдете себе пару)";[m
+[32m+[m[32m        answer = "Здесь вы найдете себе пару)";[m
+         sendMessage(chatId, answer);[m
+     }[m
+ [m
+[1mdiff --git a/src/main/java/org/example/bot/TelegramBot.java b/src/main/java/org/example/bot/TelegramBot.java[m
+[1mindex e672164..ed592cf 100644[m
+[1m--- a/src/main/java/org/example/bot/TelegramBot.java[m
+[1m+++ b/src/main/java/org/example/bot/TelegramBot.java[m
+[36m@@ -1,7 +1,6 @@[m
+ package org.example.bot;[m
+ [m
+ [m
+[31m-[m
+ import org.telegram.telegrambots.bots.TelegramLongPollingBot;[m
+ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;[m
+ import org.telegram.telegrambots.meta.api.objects.Update;[m
+[36m@@ -15,11 +14,13 @@[m [mpublic class TelegramBot extends TelegramLongPollingBot {[m
+     public void onUpdateReceived(Update update) {[m
+         Handlers messageList = new Handlers();[m
+ [m
+[31m-        if (update.hasMessage() && update.getMessage().hasText()){[m
+[32m+[m[32m        if (update.hasMessage() && update.getMessage().hasText()) {[m
+             System.out.println(update.getMessage().getText());[m
+             Long chatID = update.getMessage().getChatId();[m
+             String text = update.getMessage().getText().toLowerCase();[m
+             messageList.telegramHandlers(text, chatID);[m
+[32m+[m[32m            String kk = messageList.getAnswer();[m
+[32m+[m[32m            System.out.println(kk);[m
+         }[m
+     }[m
+ [m
+[1mdiff --git a/src/test/java/org/example/bot/HandlersTest.java b/src/test/java/org/example/bot/HandlersTest.java[m
+[1mindex 2b199c5..6d6093d 100644[m
+[1m--- a/src/test/java/org/example/bot/HandlersTest.java[m
+[1m+++ b/src/test/java/org/example/bot/HandlersTest.java[m
+[36m@@ -1,2 +1,51 @@[m
+[31m-package orgexample.bot;public class HandlersTest {[m
+[32m+[m[32mpackage org.example.bot;[m
+[32m+[m
+[32m+[m[32mimport org.junit.jupiter.api.Assertions;[m
+[32m+[m[32mimport org.junit.jupiter.api.DisplayName;[m
+[32m+[m[32mimport org.junit.jupiter.api.Test;[m
+[32m+[m[32mimport org.mockito.Mockito;[m
+[32m+[m[32mimport org.telegram.telegrambots.meta.api.methods.send.SendMessage;[m
+[32m+[m[32mimport org.telegram.telegrambots.meta.api.objects.Message;[m
+[32m+[m[32mimport org.telegram.telegrambots.meta.api.objects.Update;[m
+[32m+[m
+[32m+[m[32mimport java.util.LinkedHashMap;[m
+[32m+[m
+[32m+[m[32mimport static org.junit.jupiter.api.Assertions.assertEquals;[m
+[32m+[m[32mimport static org.junit.jupiter.api.Assertions.assertNotNull;[m
+[32m+[m[32mimport static org.mockito.Mockito.*;[m
+[32m+[m
+[32m+[m[32mpublic class HandlersTest {[m
+[32m+[m[32m    @Test[m
+[32m+[m[32m    public void startTest() {[m
+[32m+[m
+[32m+[m[32m        Handlers handlerTest =  new Handlers();[m
+[32m+[m[32m        String message = "/start";[m
+[32m+[m[32m        long chatId = 123456L;[m
+[32m+[m[32m        handlerTest.telegramHandlers(message,chatId);[m
+[32m+[m[32m        Assertions.assertEquals("Привет, ты попал в бот знакомств",handlerTest.getAnswer());[m
+[32m+[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    @Test[m
+[32m+[m[32m    public void helpTest() {[m
+[32m+[m
+[32m+[m[32m        Handlers handlerTest =  new Handlers();[m
+[32m+[m[32m        String message = "/help start";[m
+[32m+[m[32m        long chatId = 785838135;[m
+[32m+[m[32m        handlerTest.telegramHandlers(message,chatId);[m
+[32m+[m[32m        Assertions.assertEquals("Это команда для начала нашего общения",handlerTest.getAnswer());[m
+[32m+[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    @Test[m
+[32m+[m[32m    public void nonexistentTest() {[m
+[32m+[m
+[32m+[m[32m        Handlers handlerTest =  new Handlers();[m
+[32m+[m[32m        String message = "dsa";[m
+[32m+[m[32m        long chatId = 767567988;[m
+[32m+[m[32m        handlerTest.telegramHandlers(message,chatId);[m
+[32m+[m[32m        Assertions.assertEquals("Нет такой команды\nЯ вас не понимаю",handlerTest.getAnswer());[m
+[32m+[m
+[32m+[m[32m    }[m
+[32m+[m
+ }[m
+[1mdiff --git a/src/test/java/org/example/mainTest.java b/src/test/java/org/example/mainTest.java[m
+[1mindex f05eed9..6313dab 100644[m
+[1m--- a/src/test/java/org/example/mainTest.java[m
+[1m+++ b/src/test/java/org/example/mainTest.java[m
+[36m@@ -1,2 +1,4 @@[m
+[31m-package orgexample;public class mainTest {[m
+[32m+[m[32mpackage org.example;[m
+[32m+[m
+[32m+[m[32mpublic class mainTest {[m
+ }[m
